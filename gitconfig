@@ -1,0 +1,28 @@
+# 給人看：共用的 git 設定（Mac、容器都用）。install.sh 會在 ~/.gitconfig 加一行 include 指向這裡
+# 每台機器自己的東西（例如登入方式 credential）留在各自的 ~/.gitconfig，不放這裡
+# 這個 repo 是公開的：不放公司信箱、token
+
+[user]
+    name = GJ Chang
+    email = 342921632+gjchang-dev@users.noreply.github.com
+
+[alias]
+    co = checkout
+    br = branch
+    ci = commit
+    st = status
+    ad = add
+    adu = add -u .
+
+[core]
+    editor = vim
+
+[pull]
+    rebase = true
+
+[init]
+    defaultBranch = main
+
+# GitHub 在 2022 年關掉 git:// 協定；舊 repo、submodule 寫的 git:// 網址自動改走 https
+[url "https://github.com/"]
+    insteadOf = git://github.com/

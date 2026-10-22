@@ -40,11 +40,20 @@ append_once() {
 echo "== 共用：vim"
 link "$DOTFILES/vimrc" "$HOME/.vimrc"
 
+echo "== 共用：git"
+# 不取代 ~/.gitconfig（每台機器的登入設定在裡面），只加一行 include 指向共用設定
+if git config --global --get-all include.path 2>/dev/null | grep -qxF "$DOTFILES/gitconfig"; then
+    echo "  已存在  ~/.gitconfig 的 include"
+else
+    git config --global --add include.path "$DOTFILES/gitconfig"
+    echo "  已加入  ~/.gitconfig 的 include -> $DOTFILES/gitconfig"
+fi
+
 if [ "$OS" = "Darwin" ]; then
-    echo "== Mac：tmux、Ghostty、zsh 載入 fzf"
+    echo "== Mac：tmux、Ghostty、zsh 載入 zshrc"
     link "$DOTFILES/tmux.conf"      "$HOME/.tmux.conf"
     link "$DOTFILES/ghostty/config" "$HOME/.config/ghostty/config"
-    append_once "$HOME/.zshrc" "source \"$DOTFILES/fzf/fzf.zsh\""
+    append_once "$HOME/.zshrc" "source \"$DOTFILES/zshrc\""
 else
     echo "== 容器：inputrc、bash 載入 bashrc"
     link "$DOTFILES/inputrc" "$HOME/.inputrc"
