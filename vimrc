@@ -162,3 +162,26 @@ if has('cscope')
   nnoremap <C-\>t :cscope find t <C-R>=expand('<cword>')<CR><CR>
   nnoremap <C-\>f :cscope find f <C-R>=expand('<cfile>')<CR><CR>
 endif
+
+
+" ========================================
+" 8. 沒有剪貼簿功能的 vim（容器、開發板）：y 複製時用 OSC 52 送到外層終端機
+" ========================================
+" 只處理 y（不含 d 刪除），也不處理 "a 這類具名暫存器，免得剪貼簿一直被蓋掉
+if !has('clipboard') && exists('##TextYankPost') && exists('*echoraw')
+  function! s:Osc52Yank() abort
+    if v:event.operator !=# 'y' || v:event.regname !~# '^[+*]\=$'
+      return
+    endif
+    let l:text = join(v:event.regcontents, "\n")
+    if v:event.regtype ==# 'V'
+      let l:text .= "\n"
+    endif
+    let l:b64 = substitute(system('base64 | tr -d "\n"', l:text), '\n', '', 'g')
+    call echoraw("\e]52;c;" . l:b64 . "\x07")
+  endfunction
+  augroup Osc52
+    autocmd!
+    autocmd TextYankPost * call s:Osc52Yank()
+  augroup END
+endif
