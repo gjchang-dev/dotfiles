@@ -1,0 +1,19 @@
+# 給人看：不進 git 的檔案
+
+# macOS 的資料夾資訊檔
+.DS_Store
+
+# vim 的暫存檔、備份檔
+*.swp
+*~
+
+# install.sh 備份出來的舊設定（正常會在家目錄，不會出現在這裡；保險起見）
+*.bak.*
+
+# 舊版 brew bundle 會產生
+Brewfile.lock.json
+
+# 私密資料保險：就算不小心放進來也不會被 commit
+.env
+*.secret
+*.key

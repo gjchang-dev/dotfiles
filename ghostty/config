@@ -1,0 +1,14 @@
+   # 給人看：Ghostty 設定。install.sh 會把這個檔 symlink 到 ~/.config/ghostty/config
+
+   # Option 鍵當 Alt 送出：tmux 的 Alt+←/→ 切 window、Claude Code 的 Option 快捷鍵都要靠它
+   macos-option-as-alt = true
+
+   # 允許終端機裡的程式用 OSC 52 寫入 Mac 剪貼簿（第 18 步容器 vim 複製會用到）
+   clipboard-write = allow
+
+   font-size = 14
+
+   # 取消 Ghostty 預設的 Option+←/→（跳一個字，送 ESC b / ESC f），
+   # 讓它送出標準的 Alt+←/→ 給 tmux 切 window
+   keybind = alt+arrow_left=unbind
+   keybind = alt+arrow_right=unbind

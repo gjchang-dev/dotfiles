@@ -1,0 +1,14 @@
+# 給人看：bash 的按鍵設定（readline），給容器用；Mac 的 zsh 不讀這個檔
+# 先載入系統預設，不然 Ubuntu 原本設好的 Home/End 這類按鍵會失效
+$include /etc/inputrc
+
+# 跳一個字用 readline 內建的 Option+b / Option+f（Ghostty 把 Option 當 Alt 送出）
+# Ctrl+←/→ 被 macOS 拿去切桌面，送不到終端機，所以這裡不設
+
+# 按一次 Tab 就列出所有選項
+set show-all-if-ambiguous on
+# 補全時忽略大小寫
+set completion-ignore-case on
+# Tab 在選項間循環切換，Shift+Tab 反向
+"\t": menu-complet
+"\e[Z": menu-complete-backward
