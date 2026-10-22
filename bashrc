@@ -86,12 +86,25 @@ alias gss='git submodule status'
 alias gssy='git submodule sync'
 alias gsu='git submodule update --init --recursive'
 
-# gup：看目前分支落後 origin/master 幾個 commit，問要不要 rebase
-#   用法：gup [remote] [主分支]，預設 origin master
+# gup：看目前分支落後主分支幾個 commit，問要不要 rebase
+#   用法：gup [remote] [主分支]；不給主分支就自動判斷（remote 的 HEAD → main → master）
 gup() {
     local remote="${1:-origin}"
-    local main_branch="${2:-master}"
+    local main_branch="${2:-}"
     local current_branch behind ahead
+
+    # 沒指定主分支就自動判斷：先看 remote 的 HEAD 指向哪裡，沒有的話看 remote 上有沒有 main，再不然用 master
+    if [ -z "$main_branch" ]; then
+        main_branch=$(git symbolic-ref --quiet --short "refs/remotes/${remote}/HEAD" 2>/dev/null)
+        main_branch="${main_branch#"${remote}"/}"
+        if [ -z "$main_branch" ]; then
+            if git show-ref --verify --quiet "refs/remotes/${remote}/main"; then
+                main_branch=main
+            else
+                main_branch=master
+            fi
+        fi
+    fi
 
     current_branch=$(git branch --show-current 2>/dev/null)
     if [ -z "$current_branch" ]; then
@@ -106,7 +119,10 @@ gup() {
     fi
 
     echo "🔍 正在檢查 ${remote}/${main_branch} 最新狀態..."
-    git fetch "$remote" "$main_branch" --quiet
+    if ! git fetch "$remote" "$main_branch" --quiet; then
+        echo "❌ 抓不到 ${remote}/${main_branch}，檢查 remote 名稱和分支名稱（用法：gup [remote] [主分支]）"
+        return 1
+    fi
 
     behind=$(git rev-list --count HEAD.."${remote}/${main_branch}")
     ahead=$(git rev-list --count "${remote}/${main_branch}"..HEAD)

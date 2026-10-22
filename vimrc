@@ -7,6 +7,12 @@ if &compatible
  set nocompatible
 endif
 
+" 不管 LANG 有沒有設，一律用 UTF-8 處理（容器、開發板常常沒設 locale，中文會變亂碼）
+set encoding=utf-8
+scriptencoding utf-8
+" 開檔時依序嘗試：有 BOM 的 → UTF-8 → Big5（台灣的舊程式碼註解常見）→ latin1
+set fileencodings=ucs-bom,utf-8,big5,latin1
+
 " ========================================
 " 1. 外掛（vim-plug）
 " ========================================
