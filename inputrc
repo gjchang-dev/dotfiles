@@ -10,5 +10,5 @@ set show-all-if-ambiguous on
 # 補全時忽略大小寫
 set completion-ignore-case on
 # Tab 在選項間循環切換，Shift+Tab 反向
-"\t": menu-complet
+"\t": menu-complete
 "\e[Z": menu-complete-backward
