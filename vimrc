@@ -110,3 +110,49 @@ set hlsearch
 set incsearch
 set ignorecase
 set smartcase
+
+
+" ========================================
+" 6. 編譯、跳到錯誤（quickfix）
+" ========================================
+" F5（Mac 上要按 Fn+F5）：存檔 → 編譯 → 有錯誤就跳到第一個錯誤，並開 quickfix 視窗
+"   有 build/CMakeCache.txt → cmake --build build
+"   有 Makefile             → make
+"   都沒有（單一 .c 練習檔）→ 用 make 內建規則編目前這個檔，例如 hello.c → hello
+" :make 的輸出只寫進錯誤檔，不經過 tee 印到終端機（不然離開 vim 後 shell 畫面會殘留一堆編譯訊息）
+set shellpipe=>%s\ 2>&1
+function! BuildProject()
+  wall
+  if filereadable('build/CMakeCache.txt')
+    let &makeprg = 'cmake --build build'
+  elseif filereadable('Makefile') || filereadable('makefile')
+    let &makeprg = 'make'
+  else
+    let &makeprg = 'make CFLAGS="-Wall -Wextra -g" ' . expand('%:r')
+  endif
+  silent make
+  redraw!
+  cwindow
+endfunction
+nnoremap <silent> <F5> :call BuildProject()<CR>
+" ]q / [q：跳到下一個 / 上一個錯誤；:cclose 關掉 quickfix 視窗
+nnoremap <silent> ]q :cnext<CR>
+nnoremap <silent> [q :cprevious<CR>
+
+" ========================================
+" 7. cscope（先在專案根目錄跑 bashrc 的 cs，產生 cscope.out）
+" ========================================
+if has('cscope')
+  set cscopetag                         " Ctrl+] 同時查 cscope 和 tags
+  set cscopetagorder=0                  " 先查 cscope，再查 tags
+  set cscopequickfix=s-,c-,d-,i-,t-,e-  " 查詢結果放進 quickfix，可以用 ]q [q 逐筆跳
+  if filereadable('cscope.out')
+    silent! cscope add cscope.out
+  endif
+  " 游標停在名稱上，按 Ctrl+\ 再按一個字母
+  nnoremap <C-\>s :cscope find s <C-R>=expand('<cword>')<CR><CR>
+  nnoremap <C-\>g :cscope find g <C-R>=expand('<cword>')<CR><CR>
+  nnoremap <C-\>c :cscope find c <C-R>=expand('<cword>')<CR><CR>
+  nnoremap <C-\>t :cscope find t <C-R>=expand('<cword>')<CR><CR>
+  nnoremap <C-\>f :cscope find f <C-R>=expand('<cfile>')<CR><CR>
+endif

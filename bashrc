@@ -10,6 +10,18 @@ export VISUAL=vim
 HISTSIZE=10000
 HISTFILESIZE=20000
 
+# 歷史記錄存到 /commandhistory（devcontainer.json 掛進來的 named volume），Rebuild 後還在
+# 沒有掛這個 volume 的環境就沿用預設的 ~/.bash_history
+if [ -d /commandhistory ] && [ -w /commandhistory ]; then
+    export HISTFILE=/commandhistory/.bash_history
+fi
+shopt -s histappend
+# 每打完一個指令就馬上寫進檔案：practice 同時開好幾個 pane 時，關掉 shell 才不會互相蓋掉
+case "$PROMPT_COMMAND" in
+    *"history -a"*) ;;
+    *) PROMPT_COMMAND="history -a${PROMPT_COMMAND:+; $PROMPT_COMMAND}" ;;
+esac
+
 # ========== 1. 一般 ==========
 alias sb='source ~/.bashrc'
 alias vb='vim "$DOTFILES/bashrc"'
@@ -31,8 +43,14 @@ alias cdr='cd "$(cat ~/.saved_path)"'
 
 # ========== 2. 找檔案、搜尋 ==========
 ft()  { find . -name "$1"; }
-gt()  { grep -rn  --exclude=*.tags --exclude=*.html --exclude=*.map --exclude=*.patch --exclude=*.csv --exclude=*js --exclude=tags --exclude=*.out --exclude=*.xml --exclude=*.3 --exclude=*.tex "$1" .; }
-gtw() { grep -rnw --exclude=*.tags --exclude=*.html --exclude=*.map --exclude=*.csv --exclude=*js --exclude=tags --exclude=*.out --exclude=*.files --exclude=*.yang "$1" .; }
+# gt 搜字串、gtw 只搜完整單字。有 rg 就用 rg（自動跳過 .gitignore、隱藏檔、二進位檔），沒有就退回 grep
+if command -v rg >/dev/null 2>&1; then
+    gt()  { rg -n  --no-heading --glob '!tags' --glob '!cscope.*' "$1"; }
+    gtw() { rg -nw --no-heading --glob '!tags' --glob '!cscope.*' "$1"; }
+else
+    gt()  { grep -rn  --exclude-dir=.git --exclude=tags --exclude='cscope.*' "$1" .; }
+    gtw() { grep -rnw --exclude-dir=.git --exclude=tags --exclude='cscope.*' "$1" .; }
+fi
 cdf()  { cd "$(dirname "$(ft "$1")")"; }
 cddn() { cd "$(dirname "$1")"; }
 vif()  { vim $(ft "$1"); }

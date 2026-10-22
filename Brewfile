@@ -5,6 +5,7 @@ brew "tmux"
 brew "vim"
 brew "fzf"
 brew "gh"
+brew "ripgrep"
 
 # GUI 應用程式（cask）
 cask "ghostty"
