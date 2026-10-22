@@ -14,7 +14,7 @@
 | `Prefix M` | tmux | 浮動視窗開 Mac 的 zsh（push、brew 用），`exit` 關掉 |
 | `Ctrl+r` | shell | fzf 搜歷史指令 |
 | `Ctrl+t` | shell | fzf 挑檔案插進命令列（`Tab` 多選） |
-| `gt 字串` → `vil 檔案:行` | 容器 bash | 搜尋 → 直接開到那一行 |
+| `gt 字串` → `vil 檔案:行` | shell | 搜尋 → 直接開到那一行 |
 | `F5` → `]q` / `[q` | vim | 編譯 → 逐筆跳錯誤 |
 | `Ctrl+]` / `Ctrl+t` | vim | 跳到定義 / 跳回來 |
 | `Ctrl+c` | vim | 註解 / 取消註解（可選取多行） |
@@ -111,7 +111,7 @@
 | `Tab` / `Shift+Tab` | 容器 bash：在補全選項間循環 |
 | `Ctrl+x Ctrl+r` | 容器 bash：重新讀 `~/.inputrc` |
 
-## 容器 bash 的自訂指令
+## 自訂指令（Mac zsh、容器 bash 都有，定義在 `shell/common.sh`）
 
 | 指令 | 作用 |
 |---|---|
@@ -123,10 +123,26 @@
 | `gco` | fzf 挑分支切過去 |
 | `gup [remote] [主分支]` | 看落後主分支幾個 commit，問要不要 rebase（主分支會自動判斷） |
 | `gdu` `grc` `gss` `gssy` `gsu` | 衝突檔案 / rebase --continue / submodule status、sync、update |
-| `ct` / `cs` | 產生 ctags / cscope 資料庫 |
 | `ll` `la` `l` | ls 系列 |
-| `sb` / `vb` | 重新載入 bashrc / 編輯 bashrc |
-| `his` `ha` `hn` | 最近 50 筆歷史 / 寫入歷史檔 / 讀入其他 pane 的歷史 |
+| `sb` / `vb` | 重新載入 / 編輯 shell 設定（容器是 bashrc，Mac 是 zshrc） |
+| `his` | 最近 50 筆歷史 |
+
+**只在某一邊有的**
+
+| 指令 | 在哪裡 | 作用 |
+|---|---|---|
+| `tml` | Mac | 列出 tmux session |
+| `tma [名稱]` | Mac | 接回 tmux session；不給名稱就用 fzf 挑；在 tmux 裡面會改成切換過去 |
+| `ct` / `cs` | 容器 | 產生 ctags / cscope 資料庫 |
+| `ha` / `hn` | 容器 | 寫入歷史檔 / 讀入其他 pane 的歷史 |
+
+## git alias（任何 shell 都能用，定義在 `gitconfig`）
+
+| 指令 | 等於 |
+|---|---|
+| `git st` | `git status` |
+| `git co` / `git br` / `git ci` | `git checkout` / `git branch` / `git commit` |
+| `git ad` / `git adu` | `git add` / `git add -u .`（只加已追蹤檔案的修改） |
 
 ## VS Code（Mac）
 
@@ -148,7 +164,7 @@
 
 | 要做的事 | 怎麼做 |
 |---|---|
-| 改了 dotfiles 讓它生效 | bashrc：`sb`；inputrc：`Ctrl+x Ctrl+r`；tmux：`Prefix r`；Ghostty：`Cmd+Shift+,`；vim：重開 |
+| 改了 dotfiles 讓它生效 | bashrc / zshrc / shell/common.sh：`sb`；gitconfig：馬上生效；inputrc：`Ctrl+x Ctrl+r`；tmux：`Prefix r`；Ghostty：`Cmd+Shift+,`；vim：重開 |
 | Mac 要裝新工具 | 加進 `Brewfile` → `brew bundle --file=~/git/dotfiles/Brewfile` |
 | 容器要裝新工具 | 加進 `embedded-practice/.devcontainer/devcontainer.json` 的 apt 清單 → Rebuild（不要手動 apt install） |
 | Rebuild 之後 | practice 的 pane 會全部消失，重跑 `practice`；Reopen / 關掉 VS Code 不影響 practice |
