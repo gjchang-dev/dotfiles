@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # 給人看：把 dotfiles 裡的設定接到家目錄。Mac 和 Dev Container 都跑這一支
-#   Mac：手動跑一次  bash /Users/gj/git/dotfiles/install.sh
+#   Mac：手動跑一次  bash ~/git/dotfiles/install.sh
 #   容器：devcontainer.json 的 postCreateCommand 每次 Rebuild 自動跑
 # 重複跑沒關係：已經接好的會跳過，不會重複加行
 set -euo pipefail
